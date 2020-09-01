@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	
+	<script src="https://kit.fontawesome.com/1b301a96ca.js" crossorigin="anonymous"></script>
+
+	<style>
+	.level .fas {
+		font-size: 30px;
+		color: gray;
+	}
+	</style>
+	
+
+    <title>Maths addition tables</title>
+  </head>
+  <body>
+    
+	<div class="site" style="max-width:1920px; margin: auto;">
+	
+		<div class="container " style="height: 500px;">
+			<div class="row " style="height: 100px">
+				<div  id="question" class="col-md-4 offset-md-4" style="font-size: 30px">
+					2 + 2 = ?
+				</div>
+								
+				<div id="feedback" class="col-md-2 push-right" style="display: none;">
+					<div class="alert alert-success" role="alert">
+						<svg width="100%" height="100%" viewBox="0 0 16 16" class="bi bi-emoji-smile" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+  <path fill-rule="evenodd" d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683z"/>
+  <path d="M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"/>
+</svg>
+					</div>
+					<div class="alert alert-danger" role="alert">
+						<svg width="100%" height="100%" viewBox="0 0 16 16" class="bi bi-emoji-frown" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+  <path fill-rule="evenodd" d="M4.285 12.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 10.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 9.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683z"/>
+  <path d="M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"/>
+</svg>
+					</div>
+				</div>
+			</div>
+			<div class="row ">
+				<div class="col-md-7 offset-md-2">
+					<div class="progress">
+					  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+					</div>
+					<p class="level">
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+						<i class="fas fa-star"></i>
+					</p>
+				</div>
+			</div>
+			<div class="row ">
+				<div class="col-md-4 offset-md-4">
+					<form>
+					  <div class="form-group">
+					    <label for="inResult">Result</label>
+					    <input type="number" class="form-control col-lg-3 col-md-4" id="inResult" maxlength="2">
+						<!--<button id="answer" type="button" class="btn btn-primary mb-2">Submit</button>-->
+					  </div>
+				  </form>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4 offset-md-4" >
+					<p>Questions: <span id="questionsNo">0</span></p>
+					<p>Correct: <span id="correctNo">0</span></p>
+					<p>Correct in row: <span id="correctInRowNo">0</span></p>
+				</div>
+			</div>
+			<div id="passed" class="row" style="display: none;">
+				<div class="col-md-4 offset-md-4" >
+					<div class="alert alert-success" role="alert">
+					  <h4 class="alert-heading">Well done!</h4>
+					  <p>Aww yeah, you successfully passed your maths tables.</p>
+	
+					</div>
+				</div>
+			</div>
+			<div id="photo" class="row" style="display: none;">
+				<div class="col-md-4 offset-md-4" >
+					<img src="file://C:\Users\jszoj\OneDrive\Pictures\IMG_20200830_141422.jpg" style="max-height: 200px">
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+	$(function(){
+		var game = {
+			timeLimit: 5000,
+			min1: 2,
+			max1: 2,
+			min2: 1,
+			max2: 10,
+			passRate: 3,
+			logAnswers: true,
+			
+			question: "2 + 2 = ?",
+			askedQuestions: 0,
+			correct: 0,
+			interval: null,
+			questionEl: null,
+			resultInput: null,
+			answerBtn: null,
+			correctNoEl: null,
+			questionsNoEl: null,
+			number1: null,
+			number2: null,
+			expectedAnswer: null,
+			correctInRowEl: null,
+			correctInRow: 0,
+			lastQuestions: [],
+			timer: 0.0,
+			progressTick: 100,
+			answered: false,
+			nextQuestionInterval: null,
+			
+			init: function() {
+				this.questionEl =  $('#question');
+				this.resultInput =  $('#inResult');
+				this.answerBtn =  $('#answer');
+				this.correctNoEl = $('#correctNo');
+				this.questionsNoEl = $('#questionsNo');
+				this.correctInRowEl = $('#correctInRowNo');
+				this.feedbackEl = $('#feedback');
+				this.progressEl = $('.progress-bar');
+				//this.answerBtn.on( 'click', function(event){ event.preventDefault(); game.onAnswer(e); });
+				$('form').on('submit', function(event){  event.preventDefault(); /*game.onAnswer(event);*/ })
+				
+				
+				this.resultInput.on('keyup', game.debounce( 
+					 function(){ game.onAnswer(); }, 
+					 300, 	false 
+					 
+				));
+				
+				 
+				var urlParams = new URLSearchParams(window.location.search);
+				if( urlParams.has('level') ) {
+					level = parseInt(urlParams.get('level'));
+					this.setLevel(level);
+					console.log('Starting at level '+level+': '+this.min1+'-'+this.min2+'-'+this.max2);
+				}
+				
+				this.nextQuestion();
+						
+			},
+			
+			setLevel: function(level) {
+				this.min1=this.max1=parseInt(Math.ceil(level/2));
+				this.min2 = 5;
+					this.max2 = 10;
+				if(level % 2) {
+					this.min2 = 1;
+					this.max2 = 5;
+				}
+			},
+			
+			startTimer: function() {
+				this.progressInterval = setInterval(function(){
+					var p = game.progressEl;
+					game.timer = game.timer + game.progressTick;
+					var w = Math.floor(game.timer / game.timeLimit * 100.0);
+					if(w > 100 ) {
+						w = 100;
+					}
+					//console.log(w);
+					if(w == 100) {
+						p.addClass('bg-danger');
+					}
+					p.css( 'width', w.toString()+"%");
+				}, this.progressTick);
+			},
+			
+			stopTimer: function(reset) {
+				clearInterval(this.progressInterval);
+				this.timer = 0.0;
+				if (reset) {
+				  this.progressEl.css('width', '0%');
+				}
+			},
+			
+			randomNumber: function(min, max) {
+				return Math.floor((Math.random() * (max-min)) + min);
+			},
+			
+			
+			nextQuestion: function() {
+				//this.progressEl.css('width', '0%');
+				do {
+					this.number1 = this.randomNumber(this.min1,this.max1);
+					this.number2 = this.randomNumber(this.min2,this.max2);
+					this.expectedAnswer = this.number1 + this.number2;
+					this.question = this.number1+' + '+this.number2+' = ?';
+				} while( this.lastQuestions.indexOf(this.question) != -1 )
+				this.rememberQuestion();
+				this.feedbackEl.hide();
+				this.questionEl.html(this.question);
+				this.resultInput.prop('disabled', false);
+				this.resultInput.val('');
+				this.questionsNoEl.html(this.askedQuestions);
+				this.askedQuestions++;
+				this.answered = false;
+				this.progressEl.removeClass('bg-danger');
+				this.resultInput.focus();
+				this.startTimer();
+				
+				this.interval = setTimeout( function(){ game.fail() }, game.timeLimit );
+			},
+			
+			
+			onAnswer: function(event) {
+				clearTimeout(this.nextQuestionInterval);
+				this.answered = true;
+				console.debug('call onAnswer');
+				clearTimeout(this.interval);
+				this.stopTimer(true);
+				this.checkResult();
+			
+			},
+			
+			checkResult: function() {
+				var answer = parseInt(this.resultInput.val());
+				if(this.logAnswers) {
+					console.log('[answer] '+this.question.replace('?',answer));
+				}
+				this.resultInput.prop('disabled', true);
+				if( answer == this.expectedAnswer ) {
+					this.correct++;
+					this.correctInRow++;					
+				} else {
+					this.correctInRow = 0;
+				}
+				this.showFeedback( answer == this.expectedAnswer);
+				
+				this.correctNoEl.html(this.correct);
+				this.correctInRowEl.html(this.correctInRow);
+				if( this.correctInRow < this.passRate ) {
+					
+					setTimeout( function() { game.nextQuestion(); }, 2000 );
+				} else {
+					this.passTest();
+				}
+			},
+			
+			fail: function() {
+				this.stopTimer(false);
+				console.debug('call fail');
+				this.correctInRow = 0;
+				this.correctInRowEl.html('0');
+				if(this.logAnswers) {
+					console.log('[failed] '+this.question);
+				}
+				this.showFeedback(false);
+				this.nextQuestionInterval = setTimeout( function() { 
+					game.progressEl.css('width', '0%');
+					setTimeout(function(){game.nextQuestion();},400);				 
+				}, 2000 );
+			},
+			
+			
+			passTest: function() {
+				$('#passed').show();
+				clearInterval(this.progressInterval); 
+			},
+			
+			showFeedback: function(isCorrect) {
+				this.questionEl.html(this.question.replace('?', this.expectedAnswer));
+				if( ! isCorrect ) {
+					this.feedbackEl.find('.alert-success').hide();
+					this.feedbackEl.find('.alert-danger').show();
+				} else {
+					this.feedbackEl.find('.alert-success').show();
+					this.feedbackEl.find('.alert-danger').hide();
+				}
+				this.feedbackEl.show();
+			},
+			
+			debounce: function debounce(func, wait, immediate) {
+			    var timeout;
+			    return function() {
+			        var context = this, args = arguments;
+			        var later = function() {
+			            timeout = null;
+			            if (!immediate) func.apply(context, args);
+			        };
+			        var callNow = immediate && !timeout;
+			        clearTimeout(timeout);
+			        timeout = setTimeout(later, wait);
+			        if (callNow) func.apply(context, args);
+			    };
+			},
+			
+			rememberQuestion: function() {
+				if( this.lastQuestions.length > 1 ) {
+					this.lastQuestions.shift();
+				}
+				this.lastQuestions.push(this.question);
+			}
+			
+		};
+		game.init();
+		
+	})
+	</script>
+  </body>
+</html>
