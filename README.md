@@ -22,7 +22,3 @@ This mode ignores the level param.
 Starts from specific level, where in *single-level* mode you have half-level, eg 
 level 1:  1+1 to 1+5, 
 level 2: 1+5 to 1+10
-
-In the *roblox-challenge* mode there are no half-levels:
-level 1:  1+1 to 1+10, 
-level 2: 2+1 to 2+10
