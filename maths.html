@@ -247,6 +247,7 @@
 				customLevel: false,
 				failed: false,
 				stopped: false,
+				questionsPool: [],
 
 				init: function () {
 					this.questionEl = $('#question');
@@ -418,17 +419,54 @@
 				},
 
 
+				shuffleArray: function (array) {
+					var currentIndex = array.length, temporaryValue, randomIndex;
+
+					// While there remain elements to shuffle...
+					while (0 !== currentIndex) {
+
+						// Pick a remaining element...
+						randomIndex = Math.floor(Math.random() * currentIndex);
+						currentIndex -= 1;
+
+						// And swap it with the current element.
+						temporaryValue = array[currentIndex];
+						array[currentIndex] = array[randomIndex];
+						array[randomIndex] = temporaryValue;
+					}
+
+					return array;
+				},
+
+				randomQuestion: function() {
+					do {
+						this.number1 = this.randomNumber(this.min1, this.max1);
+						this.number2 = this.randomNumber(this.min2, this.max2);
+					} while (this.lastQuestions.indexOf(this.question) != -1);
+				},
+
+				generateQuestonsPool: function() {
+					for( var i=this.min2; i<this.max2+1; i++) {
+						this.questionsPool.push(i);
+					}
+					this.questionsPool = this.shuffleArray(this.questionsPool);
+				},
+
+				randomQuestionFromPool: function() {
+					if( this.questionsPool.length == 0 ) {
+						this.generateQuestonsPool();
+					}
+					this.number2 = this.questionsPool.pop();
+					this.number1 = this.min1;
+				},
+
 				nextQuestion: function () {
 					if( this.stopped ) {
 						return;
 					}
-					//this.progressEl.css('width', '0%');
-					do {
-						this.number1 = this.randomNumber(this.min1, this.max1);
-						this.number2 = this.randomNumber(this.min2, this.max2);
-						this.expectedAnswer = this.number1 + this.number2;
-						this.question = this.number1 + ' + ' + this.number2 + ' = ?';
-					} while (this.lastQuestions.indexOf(this.question) != -1)
+					this.randomQuestionFromPool();
+					this.expectedAnswer = this.number1 + this.number2;
+					this.question = this.number1 + ' + ' + this.number2 + ' = ?';
 					this.rememberQuestion();
 					this.feedbackEl.hide();
 					this.questionEl.html(this.question);
