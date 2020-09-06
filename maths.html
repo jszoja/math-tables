@@ -505,9 +505,6 @@
 				},
 
 				resetCorrectInRow: function() {
-					if( this.correctInRow == this.passRateInRow ) {
-						return;
-					}
 					this.correctInRow = 0;
 					$('.correct .fa-check').addClass('empty');
 				},
@@ -521,7 +518,9 @@
 					if (answer == this.expectedAnswer) {
 						this.onCorrect();
 					} else {
-						this.resetCorrectInRow();
+						if( this.correctInRow < this.passRateInRow ) {
+							this.resetCorrectInRow();
+						}
 					}
 					this.showFeedback(answer == this.expectedAnswer);
 
