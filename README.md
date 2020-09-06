@@ -1,6 +1,12 @@
 # math-tables
 Learn and self-test the math tables
 
+Demo site:
+- Learn by doing: https://storage.googleapis.com/maths-for-kids/maths.html
+- Roblox Challenge: https://storage.googleapis.com/maths-for-kids/maths.html?mode=roblox-challenge
+
+
+
 # URL params
 Until I do the admin UI settings are controlled from the URL, eg C:\\Desktop\maths.html?mode=roblox-challenge
 
