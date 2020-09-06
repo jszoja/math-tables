@@ -29,7 +29,16 @@
 
 		.level .fas {
 			font-size: 40px;
-			color: gray;
+			color: #e9ecef;
+		}
+
+		.fa-check  {
+			color: green;
+			font-size: 40px;
+		}
+
+		.fa-check.empty {
+			color: #e9ecef;
 		}
 
 		#question {
@@ -44,7 +53,10 @@
 		p.level {
 			margin-top: 42px;
 		}
-	</style>
+
+		
+
+		</style>
 
 
 	<title>Maths addition tables</title>
@@ -60,7 +72,7 @@
 					2 + 2 = ?
 				</div>
 
-				<div id="feedback" class="col-md-2 col-sm-4 d-none">
+				<div id="feedback" class="col-md-2 col-sm-4 ">
 					<div class="alert alert-success" role="alert">
 						<svg width="100%" height="100%" viewBox="0 0 16 16" class="bi bi-emoji-smile"
 							fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -119,6 +131,15 @@
 					</form>
 				</div>
 			</div>
+			<div class="row correct">
+				<div class="col-md-6 offset-md-3">
+					<p>
+						<i class="fas fa-check empty"></i>
+						<i class="fas fa-check empty"></i>
+						<i class="fas fa-check empty"></i>
+					</p>
+				</div>
+			</div>
 			<div class="row">
 				<div class="col-md-6 offset-md-3">
 					<p>Questions: <span id="questionsNo">0</span></p>
@@ -131,7 +152,7 @@
 					<div class="alert alert-success" role="alert">
 						<h4 class="alert-heading">Well done!</h4>
 						<p>Aww yeah, you successfully passed your maths tables.</p>
-						<p><a href="javascript:location.href=game.nextLevelUrl()" class="btn btn-primary">Next Level</a></p>
+						<p><a id="nextLevelBtn" href="javascript:void();" class="btn btn-primary">Next Level</a></p>
 					</div>
 				</div>
 			</div>
@@ -168,9 +189,8 @@
 		integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
 		crossorigin="anonymous"></script>
 	<script type="text/javascript">
-		var $game;
 		$(function () {
-			game = {
+			var game = {
 				timeLimit: 5000,
 				min1: 1,
 				max1: 1,
@@ -201,6 +221,8 @@
 				answered: false,
 				nextQuestionInterval: null,
 				customLevel: false,
+				failed: false,
+				stopped: false,
 
 				init: function () {
 					this.questionEl = $('#question');
@@ -217,10 +239,16 @@
 
 
 					this.resultInput.on('keyup', game.debounce(
-						function () { game.onAnswer(); },
+						function (event) { game.onAnswer(); },
 						300, false
 
 					));
+
+					$(document).on('keyup', function(event) {
+						if( event.which == 27 ) {
+							game.toggle();
+						}
+					});
 
 					
 					var urlParams = new URLSearchParams(window.location.search);
@@ -249,11 +277,44 @@
 						}
 					}
 					
+					$('#nextLevelBtn').on('click', function(event){
+						location.href=game.nextLevelUrl();
+					});
+
 					this.setLevel(this.level);
 					console.log('Starting at level ' + this.level + ': ' + this.min1 + '-' + this.min2 + '-' + this.max2);
 
 					this.nextQuestion();
 
+				},
+
+				toggle: function() {
+					if( this.stopped ) {
+						this.restart();
+					} else {
+						this.stop();
+					}	
+
+				},
+
+				stop: function() {
+					clearTimeout(this.nextQuestionInterval);
+					clearTimeout(this.interval);
+					this.stopTimer(true);
+					this.stopped = true;
+					$('.site > .container').css('backgroundColor', 'pink');
+					$('#inResult').prop('disabled', true);
+				},
+
+				restart: function() {
+					this.stopped = false;
+					$('.site > .container').css('backgroundColor', 'white');
+					$('#inResult').prop('disabled', false);
+					this.nextQuestion();
+				},
+
+				onCorrect: function() {
+					$('.correct i.empty').first().removeClass('empty');
 				},
 
 				nextLevelUrl: function() {
@@ -281,8 +342,8 @@
 
 					var $stars = $('p.level i');
 					// reset all to gray full star
-					$stars.find('.fa-star-half-alt').removeClass('fa-star-half-alt').addClass('fa-star').css('color', 'gray');
-					$stars.slice(0, this.min1).css('color', 'yellow');
+					$stars.find('.fa-star-half-alt').removeClass('fa-star-half-alt').addClass('fa-star').css('color', '#e9ecef');
+					$stars.slice(0, this.min1).css('color', '#f98297');
 					if (this.mode == 'single-level' && this.min2 == 1) {
 						$stars.eq(this.min1 - 1).removeClass('fa-star').addClass('fa-star-half-alt');
 					}
@@ -318,6 +379,9 @@
 
 
 				nextQuestion: function () {
+					if( this.stopped ) {
+						return;
+					}
 					//this.progressEl.css('width', '0%');
 					do {
 						this.number1 = this.randomNumber(this.min1, this.max1);
@@ -334,6 +398,7 @@
 					this.askedQuestions++;
 					this.answered = false;
 					this.progressEl.removeClass('bg-danger');
+					this.failed = false;
 					this.resultInput.focus();
 					this.startTimer();
 
@@ -342,6 +407,16 @@
 
 
 				onAnswer: function (event) {
+					if( this.failed ) {
+						return;
+					}
+					// don't allow stopping here as
+					// user could keep stopping until getting the question s/he knows the answer
+					/*
+					if( event.which == 27 ) {
+							this.toggle();
+					}
+					*/
 					clearTimeout(this.nextQuestionInterval);
 					this.answered = true;
 					console.debug('call onAnswer');
@@ -349,6 +424,11 @@
 					this.stopTimer(true);
 					this.checkResult();
 
+				},
+
+				resetCorrectInRow: function() {
+					this.correctInRow = 0;
+					$('.correct .fa-check').addClass('empty');
 				},
 
 				checkResult: function () {
@@ -360,8 +440,9 @@
 					if (answer == this.expectedAnswer) {
 						this.correct++;
 						this.correctInRow++;
+						this.onCorrect();
 					} else {
-						this.correctInRow = 0;
+						this.resetCorrectInRow();
 					}
 					this.showFeedback(answer == this.expectedAnswer);
 
@@ -379,7 +460,7 @@
 							}
 
 							// level up
-							this.correctInRow = 0;
+							this.resetCorrectInRow();
 							this.level = this.level + 1;
 							this.setLevel(this.level);
 							setTimeout(function () { game.nextQuestion(); }, 2000);
@@ -389,8 +470,9 @@
 
 				fail: function () {
 					this.stopTimer(false);
+					this.failed = true;
 					console.debug('call fail');
-					this.correctInRow = 0;
+					this.resetCorrectInRow();
 					this.correctInRowEl.html('0');
 					if (this.logAnswers) {
 						console.log('[failed] ' + this.question);
@@ -444,7 +526,7 @@
 				}
 
 			};
-			//game.init();
+			game.init();
 
 		})
 	</script>
