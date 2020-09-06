@@ -150,11 +150,13 @@
 			<div class="row correct">
 				<div class="col-md-6 offset-md-3">
 					<p id="correctInRowLabel" class="label">You need %d correct answers in row to pass the level.</p>
-					<p>
-						<i class="fas fa-check empty"></i>
-						<i class="fas fa-check empty"></i>
-						<i class="fas fa-check empty"></i>
-					</p>
+					<p></p>
+				</div>
+			</div>
+			<div class="row correctInLevel d-none">
+				<div class="col-md-6 offset-md-3">
+					<p id="correctInLevelLabel" class="label">You need %d correct answers in level to pass it.</p>
+					<p></p>
 				</div>
 			</div>
 			<div class="row">
@@ -213,12 +215,14 @@
 				max1: 1,
 				min2: 1,
 				max2: 5,
-				passRate: 3,
+				passRateInRow: 3,
+				passRateCorrect: 0,
 				logAnswers: true,
 				mode: 'single-level',
 
 				levelLabelTxt: 'You are at level %s',
 				correctInRowTxt: 'You need %d correct answers in row to pass the level.',
+				correctInLevelTxt: 'You need %d correct answers in level to pass it.',
 				level: 1,
 				question: "2 + 2 = ?",
 				askedQuestions: 0,
@@ -234,6 +238,7 @@
 				expectedAnswer: null,
 				correctInRowEl: null,
 				correctInRow: 0,
+				correctInLevel: 0,
 				lastQuestions: [],
 				timer: 0.0,
 				progressTick: 100,
@@ -275,6 +280,10 @@
 						var mode = urlParams.get('mode');
 						if (mode == 'roblox-challenge') {
 							this.mode = mode;
+							this.passRateCorrect = 6;
+							$('#correctInLevelLabel').html( this.correctInLevelTxt.replace('%d', this.passRateCorrect ) );
+							$('.correctInLevel p').eq(1).html('<i class="fas fa-check empty"></i>'.repeat(this.passRateCorrect));
+							$('.correctInLevel').removeClass('d-none');
 							//this.level = 9;
 						}
 					} 
@@ -303,7 +312,8 @@
 					this.setLevel(this.level);
 					console.log('Starting at level ' + this.level + ': ' + this.min1 + '-' + this.min2 + '-' + this.max2);
 
-					$('#correctInRowLabel').html( this.correctInRowTxt.replace('%d', this.passRate ) );
+					$('#correctInRowLabel').html( this.correctInRowTxt.replace('%d', this.passRateInRow ) );
+					$('.correct p').eq(1).html('<i class="fas fa-check empty"></i>'.repeat(this.passRateInRow));
 
 					this.nextQuestion();
 
@@ -337,7 +347,9 @@
 				onCorrect: function() {
 					this.correct++;
 					this.correctInRow++;
+					this.correctInLevel++;
 					$('.correct i.empty').first().removeClass('empty');
+					$('.correctInLevel i.empty').first().removeClass('empty');
 				},
 
 				nextLevelUrl: function() {
@@ -346,11 +358,13 @@
 				},
 
 				setLevel: function (level) {
+					this.correctInLevel = 0;
 					if (this.mode == 'roblox-challenge') {
 						this.min1 = this.max1 = level;
 						this.min2 = 1;
 						this.max2 = 10;
 						$('#levelLabel').html( this.levelLabelTxt.replace('%s', level ) );
+						$('.correctInLevel .fa-check').addClass('empty');
 
 						// single-level mode
 					} else {
@@ -453,6 +467,9 @@
 				},
 
 				resetCorrectInRow: function() {
+					if( this.correctInRow == this.passRateInRow ) {
+						return;
+					}
 					this.correctInRow = 0;
 					$('.correct .fa-check').addClass('empty');
 				},
@@ -472,13 +489,13 @@
 
 					this.correctNoEl.html(this.correct);
 					this.correctInRowEl.html(this.correctInRow);
-					if (this.correctInRow < this.passRate) {
+					if (this.correctInRow < this.passRateInRow || ( this.passRateCorrect > 0 && this.correctInLevel < this.passRateCorrect )) {
 						setTimeout(function () { game.nextQuestion(); }, 2000);
 					} else {
 						if (this.mode == 'single-level') {
 							this.passTest();
 						} else if (this.mode == 'roblox-challenge') {
-							if (this.level == 10) {
+							if (this.level == 10 ) {
 								this.passTest();
 								return;
 							}
