@@ -211,7 +211,7 @@
 	<script type="text/javascript">
 		$(function () {
 			var game = {
-				timeLimit: 5000,
+				timeLimit: 3800,
 				min1: 1,
 				max1: 1,
 				min2: 1,
@@ -268,7 +268,7 @@
 
 					this.resultInput.on('keyup', game.debounce(
 						function (event) { game.onAnswer(); },
-						300, false
+						450, false, 2
 
 					));
 
@@ -282,13 +282,18 @@
 					var urlParams = new URLSearchParams(window.location.search);
 					if (urlParams.has('mode')) {
 						var mode = urlParams.get('mode');
-						if ( [ 'roblox-challenge', 'full-level', 'single-level' ].indexOf(this.mode) != -1) {
+						if ( [ 'roblox-challenge', 'full-level', 'half-level' ].indexOf(this.mode) != -1) {
 							this.mode = mode;
 						}
 					} 
 					
-					this.singleLevelMode = [ 'single-level', 'full-level' ].indexOf(this.mode) != -1;
+					this.singleLevelMode = [ 'half-level', 'full-level' ].indexOf(this.mode) != -1;
 					this.fullLevelMode = [ 'roblox-challenge', 'full-level' ].indexOf(this.mode) != -1;
+
+					if( this.mode == 'roblox-challenge' ) {
+						this.timeLimit = 3000;
+						//this.level=9;
+					}
 
 					if( this.fullLevelMode ) {
 						this.passRateCorrect = 6;
@@ -374,7 +379,7 @@
 						$('#levelLabel').html( this.levelLabelTxt.replace('%s', level ) );
 						$('.correctInLevel .fa-check').addClass('empty');
 
-						// single-level mode
+						// half-level mode
 					} else {
 						this.min1 = this.max1 = parseInt(Math.ceil(level / 2));
 						this.min2 = 5;
@@ -590,18 +595,35 @@
 					this.feedbackEl.show();
 				},
 
-				debounce: function debounce(func, wait, immediate) {
+				debounce: function debounce(func, wait, immediate, maxCalls) {
 					var timeout;
+					var callsCounter = 0;
 					return function () {
 						var context = this, args = arguments;
 						var later = function () {
 							timeout = null;
-							if (!immediate) func.apply(context, args);
+							if (!immediate) { 
+								callsCounter=0;
+								func.apply(context, args);
+							}
 						};
-						var callNow = immediate && !timeout;
+						callsCounter++;
+						// console.debug('[debounce] calls counter = '+callsCounter);
+						if( maxCalls ) {
+							immediate = false;
+							if( callsCounter == maxCalls ) {
+								timeout = null;
+								immediate = true;
+							}
+						}
+						// console.debug('[debounce] immediate='+immediate+'; timeout='+timeout);
+						var callNow = immediate && !timeout ;
 						clearTimeout(timeout);
 						timeout = setTimeout(later, wait);
-						if (callNow) func.apply(context, args);
+						if (callNow) { 
+							callsCounter=0;
+							func.apply(context, args);
+						}
 					};
 				},
 
