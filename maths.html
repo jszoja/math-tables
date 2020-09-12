@@ -26,6 +26,10 @@
 			background-position: top left;
 		}
 
+		.site.minus {
+			background-image: url("data:image/svg+xml,<svg width='200px' height='200px' viewBox='0 0 16 16' class='bi bi-file-minus' fill='%23e6e6e6' xmlns='http://www.w3.org/2000/svg'>  <path fill-rule='evenodd' d='M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z'/>  <path fill-rule='evenodd' d='M5.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5z'/></svg>" );
+		}
+
 		.site>.container {
 			min-height: 500px;
 			
@@ -298,9 +302,9 @@
 				rememberedQuestionsCount: 5,
 
 				// levels config
-				availableModes: [ 'roblox-challenge', 'full-level', 'half-level', 'ten-minus' ],
-				singleLevelModes: [ 'half-level', 'full-level', 'ten-minus' ],
-				fullLevelModes: [ 'roblox-challenge', 'full-level', 'ten-minus' ],
+				availableModes: [ 'roblox-challenge', 'full-level', 'half-level', 'ten-minus', 'full-minus' ],
+				singleLevelModes: [ 'half-level', 'full-level', 'ten-minus', 'full-minus' ],
+				fullLevelModes: [ 'roblox-challenge', 'full-level', 'ten-minus', 'full-minus' ],
 
 				// wording
 				levelLabelTxt: 'You are at level %s',
@@ -388,9 +392,6 @@
 
 					if( this.fullLevelMode ) {
 						this.passRateCorrect = 10;
-						$('#correctInLevelLabel').html( this.correctInLevelTxt.replace('%d', this.passRateCorrect ) );
-						$('.correctInLevel p').eq(1).html('<i class="fas fa-check empty"></i>'.repeat(this.passRateCorrect));
-						$('.correctInLevel').removeClass('d-none');
 					}
 					
 					// restore the level from long-living local storage
@@ -413,10 +414,12 @@
 						}
 					}
 					
-					if( this.mode == 'ten-minus' ) {
+					if( [ 'ten-minus', 'full-minus' ].indexOf(this.mode) != -1 ) {
 						this.mathOperator = '-';
-						this.min1 = this.max1 = 10;
-						this.level= 10;
+						$('.site').addClass('minus');
+						if( this.mode == 'ten-minus' ) {
+							this.level= 10;
+						} 
 					}
 
 					$('#nextLevelBtn').on('click', function(event){
@@ -469,7 +472,26 @@
 
 				nextLevelUrl: function() {
 					var nextLevel = this.level+1;
-					return '?level='+nextLevel;
+					return '?mode='+this.mode+'&level='+nextLevel;
+				},
+
+
+				setDeductionLevels: function() {
+					if( [ 'ten-minus', 'full-minus' ].indexOf(this.mode) == -1 ) {
+						return;
+					}
+					
+					this.min2 = 0;
+					this.max2 = this.min1;
+					if( this.passRateInRow > this.max2+1 ) {
+						this.passRateInRow = this.max2+1;
+					}
+					if( this.passRateCorrect > this.max2+1 ) {
+						this.passRateCorrect = this.max2+1;
+					}
+					if( this.rememberedQuestionsCount > this.max2+1 ) {
+						this.rememberedQuestionsCount = Math.floor(this.max2/2);
+					}
 				},
 
 				setLevel: function (level) {
@@ -479,8 +501,15 @@
 						this.min1 = this.max1 = level;
 						this.min2 = 1;
 						this.max2 = 10;
+
+						this.setDeductionLevels();
+
 						$('#levelLabel').html( this.levelLabelTxt.replace('%s', level ) );
 						$('.correctInLevel .fa-check').addClass('empty');
+
+						$('#correctInLevelLabel').html( this.correctInLevelTxt.replace('%d', this.passRateCorrect ) );
+						$('.correctInLevel p').eq(1).html('<i class="fas fa-check empty"></i>'.repeat(this.passRateCorrect));
+						$('.correctInLevel').removeClass('d-none');
 
 						// half-level mode
 					} else {
@@ -560,20 +589,20 @@
 					return array;
 				},
 
-				randomQuestion: function() {
-					do {
-						this.number1 = this.randomNumber(this.min1, this.max1);
-						this.number2 = this.randomNumber(this.min2, this.max2);
-						this.question = this.number1 + ' + ' + this.number2 + ' = ?';
-					} while (this.lastQuestions.indexOf(this.question) != -1);
-				},
-
 				generateQuestonsPool: function() {
 					for( var i=this.min2; i<this.max2+1; i++) {
 						this.questionsPool.push(i);
 					}
-					this.questionsPool = _.difference(this.questionsPool, this.lastQuestions);
+					console.debug('clean',this.questionsPool);
+					console.debug('last ones',this.lastQuestions);
+
+					var questionsLeft = _.difference(this.questionsPool, this.lastQuestions);
+					if( questionsLeft.length == 0 ) {
+						this.lastQuestions = [];
+						console.warn('All available questions were already answered! Flushing the last question memory.');
+					}
 					this.questionsPool = this.shuffleArray(this.questionsPool);
+					
 				},
 
 				randomQuestionFromPool: function() {
@@ -585,7 +614,7 @@
 						this.number2 = this.questionsPool.pop();
 						this.number1 = this.min1;
 						this.question = this.number1 + ' ' + this.mathOperator + ' ' + this.number2 + ' = ?';
-					} while (this.lastQuestions.indexOf(this.question) != -1);
+					} while (this.lastQuestions.indexOf(this.number2) != -1);
 				},
 
 				nextQuestion: function () {
@@ -643,10 +672,16 @@
 				},
 
 				checkResult: function () {
-					this.lastAnswerTime = (performance.now() - this.answerTimeStart - this.answerDebounce)/1000;
+					this.lastAnswerTime = performance.now() - this.answerTimeStart;
+					var inRes = this.resultInput.val();
+					// there is no debounce after pressing 2nd character
+					if( inRes.length == 1 ) {
+						this.lastAnswerTime -= this.answerDebounce;
+					}
+					this.lastAnswerTime /= 1000;
 					this.levelTimer += this.lastAnswerTime;
 					console.log('level timer = '+this.levelTimer);
-					var answer = parseInt(this.resultInput.val());
+					var answer = parseInt(inRes);
 					if (this.logAnswers) {
 						console.log('[answer] ' + this.question.replace('?', answer) + ' in '+this.lastAnswerTime+'s');
 					}
@@ -707,7 +742,7 @@
 				passTest: function () {
 					var passedId = this.mode == 'roblox-challenge' ? '#modalPassedRobloxChallenge' : '#modalPassedLevel';
 					clearInterval(this.progressInterval);
-					if( this.mode = 'ten-minus' ) {
+					if( this.mode == 'ten-minus' ) {
 						$(passedId+' p').slice(1,3).hide();
 					}
 					$(passedId).modal('show');
@@ -766,10 +801,13 @@
 				},
 
 				rememberQuestion: function () {
-					if (this.lastQuestions.length > this.rememberedQuestionsCount) {
+					if( this.rememberedQuestionsCount == 0 ) {
+						return;
+					}
+					if (this.lastQuestions.length >= this.rememberedQuestionsCount) {
 						this.lastQuestions.shift();
 					}
-					this.lastQuestions.push(this.question);
+					this.lastQuestions.push(this.number2);
 				}
 
 			};
