@@ -282,6 +282,7 @@
 		$(function () {
 			$('.toast').toast({delay:2500});
 			var game = {
+				// generic config - non-resticted
 				timeLimit: 3000,
 				min1: 1,
 				max1: 1,
@@ -296,10 +297,18 @@
 				// number of last questions to remember and prevent asking twice
 				rememberedQuestionsCount: 5,
 
+				// levels config
+				availableModes: [ 'roblox-challenge', 'full-level', 'half-level', 'ten-minus' ],
+				singleLevelModes: [ 'half-level', 'full-level', 'ten-minus' ],
+				fullLevelModes: [ 'roblox-challenge', 'full-level', 'ten-minus' ],
+
+				// wording
 				levelLabelTxt: 'You are at level %s',
 				correctInRowTxt: 'You need %d correct answers in row to pass the level.',
 				correctInLevelTxt: 'You need %d correct answers in level to pass it.',
 				levelCompletedToastTxt: 'Level completed in %ds',
+
+				// advance config - restricted for dev - better leave
 				level: 1,
 				question: "2 + 2 = ?",
 				askedQuestions: 0,
@@ -331,6 +340,7 @@
 				answerTimeStart: null,
 				goldAnswersInRow: 0,
 				levelTimer: 0.0,
+				mathOperator: '+',
 
 				init: function () {
 					this.questionEl = $('#question');
@@ -362,13 +372,14 @@
 					var urlParams = new URLSearchParams(window.location.search);
 					if (urlParams.has('mode')) {
 						var mode = urlParams.get('mode');
-						if ( [ 'roblox-challenge', 'full-level', 'half-level' ].indexOf(this.mode) != -1) {
+						if ( this.availableModes.indexOf(this.mode) != -1) {
 							this.mode = mode;
 						}
 					} 
 					
-					this.singleLevelMode = [ 'half-level', 'full-level' ].indexOf(this.mode) != -1;
-					this.fullLevelMode = [ 'roblox-challenge', 'full-level' ].indexOf(this.mode) != -1;
+					// level modes setup
+					this.singleLevelMode = this.singleLevelModes.indexOf(this.mode) != -1;
+					this.fullLevelMode = this.fullLevelModes.indexOf(this.mode) != -1;
 
 					if( this.mode == 'roblox-challenge' ) {
 						this.timeLimit = 3000;
@@ -402,6 +413,12 @@
 						}
 					}
 					
+					if( this.mode == 'ten-minus' ) {
+						this.mathOperator = '-';
+						this.min1 = this.max1 = 10;
+						this.level= 10;
+					}
+
 					$('#nextLevelBtn').on('click', function(event){
 						location.href=game.nextLevelUrl();
 					});
@@ -567,7 +584,7 @@
 
 						this.number2 = this.questionsPool.pop();
 						this.number1 = this.min1;
-						this.question = this.number1 + ' + ' + this.number2 + ' = ?';
+						this.question = this.number1 + ' ' + this.mathOperator + ' ' + this.number2 + ' = ?';
 					} while (this.lastQuestions.indexOf(this.question) != -1);
 				},
 
@@ -576,8 +593,14 @@
 						return;
 					}
 					this.randomQuestionFromPool();
-					this.expectedAnswer = this.number1 + this.number2;
+
+					if( this.mathOperator == '+' ) {
+						this.expectedAnswer = this.number1 + this.number2;
+					} else {
+						this.expectedAnswer = this.number1 - this.number2;
+					}
 					this.rememberQuestion();
+					
 					this.feedbackEl.hide();
 					this.questionEl.html(this.question);
 					this.resultInput.prop('disabled', false);
@@ -684,6 +707,7 @@
 				passTest: function () {
 					var passedId = this.mode == 'roblox-challenge' ? '#modalPassedRobloxChallenge' : '#modalPassedLevel';
 					clearInterval(this.progressInterval);
+					$(passedId+' p').slice(1,3).hide();
 					$(passedId).modal('show');
 				},
 
