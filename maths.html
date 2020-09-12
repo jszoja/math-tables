@@ -276,21 +276,25 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
 		integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
 		crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/underscore@1.11.0/underscore-min.js" crossorigin="anonymous"></script>
+		
 	<script type="text/javascript">
 		$(function () {
 			$('.toast').toast({delay:2500});
 			var game = {
-				timeLimit: 3800,
+				timeLimit: 3000,
 				min1: 1,
 				max1: 1,
 				min2: 1,
 				max2: 5,
-				passRateInRow: 3,
-				passRateCorrect: 0,
+				passRateInRow: 6,
+				passRateCorrect: 10,
 				logAnswers: true,
 				mode: 'full-level',
 				answerDebounce: 400,
 				goldAnswerSpeed: 1.25,
+				// number of last questions to remember and prevent asking twice
+				rememberedQuestionsCount: 5,
 
 				levelLabelTxt: 'You are at level %s',
 				correctInRowTxt: 'You need %d correct answers in row to pass the level.',
@@ -372,7 +376,7 @@
 					}
 
 					if( this.fullLevelMode ) {
-						this.passRateCorrect = 6;
+						this.passRateCorrect = 10;
 						$('#correctInLevelLabel').html( this.correctInLevelTxt.replace('%d', this.passRateCorrect ) );
 						$('.correctInLevel p').eq(1).html('<i class="fas fa-check empty"></i>'.repeat(this.passRateCorrect));
 						$('.correctInLevel').removeClass('d-none');
@@ -551,6 +555,7 @@
 					for( var i=this.min2; i<this.max2+1; i++) {
 						this.questionsPool.push(i);
 					}
+					this.questionsPool = _.difference(this.questionsPool, this.lastQuestions);
 					this.questionsPool = this.shuffleArray(this.questionsPool);
 				},
 
@@ -559,6 +564,7 @@
 						if( this.questionsPool.length == 0 ) {
 							this.generateQuestonsPool();
 						}
+
 						this.number2 = this.questionsPool.pop();
 						this.number1 = this.min1;
 						this.question = this.number1 + ' + ' + this.number2 + ' = ?';
@@ -688,6 +694,7 @@
 					$success.toggle(isCorrect);
 					this.feedbackEl.find('.alert-danger').toggle(!isCorrect);
 					$success.find('svg.bi-award-fill').toggle(goldAnswer);
+					$success.find('svg.bi-emoji-smile').toggle(!goldAnswer);
 					if(goldAnswer) {
 						this.goldAnswersInRow++;
 						if(this.goldAnswersInRow > 2) {
@@ -733,7 +740,7 @@
 				},
 
 				rememberQuestion: function () {
-					if (this.lastQuestions.length > 1) {
+					if (this.lastQuestions.length > this.rememberedQuestionsCount) {
 						this.lastQuestions.shift();
 					}
 					this.lastQuestions.push(this.question);
