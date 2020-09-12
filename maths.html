@@ -707,7 +707,9 @@
 				passTest: function () {
 					var passedId = this.mode == 'roblox-challenge' ? '#modalPassedRobloxChallenge' : '#modalPassedLevel';
 					clearInterval(this.progressInterval);
-					$(passedId+' p').slice(1,3).hide();
+					if( this.mode = 'ten-minus' ) {
+						$(passedId+' p').slice(1,3).hide();
+					}
 					$(passedId).modal('show');
 				},
 
