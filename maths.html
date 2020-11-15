@@ -30,6 +30,10 @@
 			background-image: url("data:image/svg+xml,<svg width='200px' height='200px' viewBox='0 0 16 16' class='bi bi-file-minus' fill='%23e6e6e6' xmlns='http://www.w3.org/2000/svg'>  <path fill-rule='evenodd' d='M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z'/>  <path fill-rule='evenodd' d='M5.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5z'/></svg>" );
 		}
 
+		.site.multiply {
+			background-image: url("data:image/svg+xml,<svg width='200px' height='200px' viewBox='0 0 16 16' class='bi bi-file-excel' fill='%23e6e6e6' xmlns='http://www.w3.org/2000/svg'> <path fill-rule='evenodd' d='M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z'/> <path fill-rule='evenodd' d='M5.18 4.616a.5.5 0 0 1 .704.064L8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 0 1 .064-.704z'/> </svg>");
+		}
+
 		.site>.container {
 			min-height: 500px;
 			
@@ -309,8 +313,8 @@
 				rememberedQuestionsCount: 5,
 
 				// levels config
-				availableModes: [ 'roblox-challenge', 'full-level', 'half-level', 'ten-minus', 'full-minus' ],
-				singleLevelModes: [ 'half-level', 'full-level', 'ten-minus', 'full-minus' ],
+				availableModes: [ 'roblox-challenge', 'full-level', 'half-level', 'ten-minus', 'full-minus', 'full-multiply' ],
+				singleLevelModes: [ 'half-level', 'full-level', 'ten-minus', 'full-minus', 'full-multiply' ],
 				fullLevelModes: [ 'roblox-challenge', 'full-level', 'ten-minus', 'full-minus' ],
 
 				// wording
@@ -427,6 +431,9 @@
 						if( this.mode == 'ten-minus' ) {
 							this.level= 10;
 						} 
+					} else if( [ 'full-multiply' ].indexOf(this.mode) != -1 ) {
+						this.mathOperator = 'x';
+						$('.site').addClass('multiply');
 					}
 
 					$('#nextLevelBtn').on('click', function(event){
@@ -632,6 +639,8 @@
 
 					if( this.mathOperator == '+' ) {
 						this.expectedAnswer = this.number1 + this.number2;
+					} else if( this.mathOperator == 'x' ) {
+						this.expectedAnswer = this.number1 * this.number2;
 					} else {
 						this.expectedAnswer = this.number1 - this.number2;
 					}
