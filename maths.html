@@ -23,7 +23,7 @@
 			margin: auto;
 			background-image: url("data:image/svg+xml,<svg width='200px' height='200px' viewBox='0 0 16 16' class='bi bi-file-plus' fill='%23e6e6e6' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z'/><path fill-rule='evenodd' d='M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z'/></svg>" );
 			background-repeat: no-repeat;
-			background-position: top left;
+			background-position: 10px 10px;
 		}
 
 		.site.minus {
@@ -95,6 +95,10 @@
 			background-color: #f1c3d7;
 		}
 
+		#resetProgress {
+			color: white;
+		}
+
 		</style>
 
 
@@ -102,9 +106,49 @@
 </head>
 
 <body>
-
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+			<!--availableModes: [ 'roblox-challenge', 'full-level', 'half-level', 'ten-minus', 'full-minus', 'full-multiply' ],-->
+		  <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarAdding" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  Adding(+)
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarAdding">
+				  <a class="dropdown-item" href="?mode=half-level">1-5 levels</a>
+				  <a class="dropdown-item" href="?mode=full-level">1-10 levels</a>
+				  <a class="dropdown-item" href="?mode=roblox-challenge">Roblox Challenge!</a>
+				</div>
+			  </li>
+			  <li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarSubstracting" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  Substracting(-)
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarSubstracting">
+					<a class="dropdown-item" href="?mode=full-minus">1-10 levels</a>
+					<a class="dropdown-item" href="?mode=ten-minus">10</a>
+				</div>
+			  </li>
+			  <li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarMultiply" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  Multiply(x)
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarMultiply">
+					<a class="dropdown-item" href="?mode=full-multiply">1-10 levels</a>
+					<a class="dropdown-item" href="?mode=half-multiply">1-5 levels</a>
+				</div>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link btn btn-danger" id="resetProgress" href="javascript:void();">Reset progress</a>
+			  </li>
+		  </ul>
+		</div>
+	  </nav>
 	<div class="site">
-
+		
 		<div class="container ">
 			<div class="row question">
 				<div id="question" class="col-lg-4 offset-lg-3 col-md-4 offset-md-4 col-sm-8">
@@ -313,9 +357,9 @@
 				rememberedQuestionsCount: 5,
 
 				// levels config
-				availableModes: [ 'roblox-challenge', 'full-level', 'half-level', 'ten-minus', 'full-minus', 'full-multiply' ],
-				singleLevelModes: [ 'half-level', 'full-level', 'ten-minus', 'full-minus', 'full-multiply' ],
-				fullLevelModes: [ 'roblox-challenge', 'full-level', 'ten-minus', 'full-minus' ],
+				availableModes: [ 'roblox-challenge', 'full-level', 'half-level', 'ten-minus', 'full-minus', 'full-multiply','half-multiply' ],
+				singleLevelModes: [ 'half-level', 'full-level', 'ten-minus', 'full-minus', 'full-multiply','half-multiply' ],
+				fullLevelModes: [ 'roblox-challenge', 'full-level', 'ten-minus', 'full-minus', 'full-multiply' ],
 
 				// wording
 				levelLabelTxt: 'You are at level %s',
@@ -431,7 +475,7 @@
 						if( this.mode == 'ten-minus' ) {
 							this.level= 10;
 						} 
-					} else if( [ 'full-multiply' ].indexOf(this.mode) != -1 ) {
+					} else if( [ 'full-multiply', 'half-multiply' ].indexOf(this.mode) != -1 ) {
 						this.mathOperator = 'x';
 						$('.site').addClass('multiply');
 					}
@@ -443,10 +487,29 @@
 					this.setLevel(this.level);
 					console.log('Starting at level ' + this.level + ': ' + this.min1 + '-' + this.min2 + '-' + this.max2);
 
+					$('#resetProgress').on('click', game.onResetProgress);
+
 					$('#correctInRowLabel').html( this.correctInRowTxt.replace('%d', this.passRateInRow ) );
 					$('.correct p').eq(1).html('<i class="fas fa-check empty"></i>'.repeat(this.passRateInRow));
 
 					this.nextQuestion();
+
+					this.setMenu();
+
+				},
+
+
+				setMenu: function() {
+					$('.nav-item a[href="?mode='+game.mode+'"]').addClass('active');
+				},
+
+				onResetProgress: function() {
+					if( ! confirm('Do you want to start from level 1?') ) {
+						return;
+					}	
+
+					game.saveLevelProgress(1);
+					location.reload();
 
 				},
 
@@ -538,12 +601,8 @@
 						$('#levelLabel').html( this.levelLabelTxt.replace('%s', levelText ) );
 					}
 
-					// save progress
-					if( this.singleLevelMode ) {
-						localStorage.setItem('level', this.level);
-					} else {
-						sessionStorage.setItem('level', this.level);
-					}
+				
+					this.saveLevelProgress();
 
 					var $stars = $('p.level i');
 					// reset all to gray full star
@@ -552,6 +611,20 @@
 					if (! this.fullLevelMode && this.min2 == 1) {
 						$stars.eq(this.min1 - 1).removeClass('fa-star').addClass('fa-star-half-alt');
 					}
+				},
+
+				saveLevelProgress: function(level) {
+
+					if( typeof level == 'undefined' ) {
+						level = this.level;
+					}
+						// save progress
+					if( this.singleLevelMode ) {
+						localStorage.setItem('level', level);
+					} else {
+						sessionStorage.setItem('level', level);
+					}
+
 				},
 
 				startTimer: function () {
