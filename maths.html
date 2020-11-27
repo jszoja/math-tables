@@ -240,7 +240,7 @@
 			</div>
 		</div>
 		<footer class="container-fluid text-center">
-				<p>Maths for kids by jszoja@gmail.com | v1.8</p>
+				<p>Maths for kids by jszoja@gmail.com | v<span id="appVersion">1.8</span></p>
 		</footer>
 	</div>
 
@@ -342,6 +342,7 @@
 			$('.toast').toast({delay:2500});
 			var game = {
 				// generic config - non-resticted
+				version: '1.8',
 				timeLimit: 3000,
 				min1: 1,
 				max1: 1,
@@ -369,7 +370,7 @@
 				levelCompletedToastTxt: 'Level completed in %ds',
 
 				// advance config - restricted for dev - better leave
-				level: 10,
+				level: 1,
 				question: "2 + 2 = ?",
 				askedQuestions: 0,
 				correct: 0,
@@ -401,6 +402,8 @@
 				goldAnswersInRow: 0,
 				levelTimer: 0.0,
 				mathOperator: '+',
+				lastExpectedAnswerLength: null,
+				keyListeners: [],
 
 				init: function () {
 					this.questionEl = $('#question');
@@ -416,18 +419,14 @@
 					$('form').on('submit', function (event) { event.preventDefault(); /*game.onAnswer(event);*/ })
 
 
-					this.resultInput.on('keyup', game.debounce(
-						function (event) { game.onAnswer(); },
-						this.answerDebounce, false, 2
-
-					));
-
 					$(document).on('keyup', function(event) {
 						if( event.which == 27 ) {
 							game.toggle();
 						}
 					});
 
+
+					$('#appVersion').html(this.version);
 					
 					var urlParams = new URLSearchParams(window.location.search);
 					if (urlParams.has('mode')) {
@@ -720,6 +719,8 @@
 					}
 					this.rememberQuestion();
 					
+					this.setAnswerKeyListener();
+
 					this.feedbackEl.hide();
 					this.questionEl.html(this.question);
 					this.resultInput.prop('disabled', false);
@@ -733,6 +734,34 @@
 					this.startTimer();
 
 					this.interval = setTimeout(function () { game.fail() }, game.timeLimit);
+				},
+
+				setAnswerKeyListener: function() {
+
+					var length = this.expectedAnswer.toString().length;
+					console.debug('Setting key listener for length '+length);
+
+					// create callback for relevant input length
+					if( typeof this.keyListeners[length] == 'undefined' ) {
+						this.keyListeners[length] =   game.debounce(
+							function (event) { game.onAnswer(); },
+							this.answerDebounce, false, length
+						)
+					}
+
+					if( this.lastExpectedAnswerLength != length ) {
+						// unbind the previous key listener if different
+						if( this.lastExpectedAnswerLength ) {
+							this.resultInput.off('keyup', this.keyListeners[this.lastExpectedAnswerLength]);
+							console.debug('Unbinding answer key listener for '+this.lastExpectedAnswerLength+' characters');
+						}
+
+						this.resultInput.on('keyup', this.keyListeners[length]);
+						console.debug('Binding answer key listener for '+length+' characters');
+						this.lastExpectedAnswerLength = length;
+					}
+
+					
 				},
 
 
@@ -765,9 +794,9 @@
 					this.lastAnswerTime = performance.now() - this.answerTimeStart;
 					var inRes = this.resultInput.val();
 					// there is no debounce after pressing 2nd character
-					if( inRes.length == 1 ) {
-						this.lastAnswerTime -= this.answerDebounce;
-					}
+					// if( inRes.length == 1 ) {
+					// 	this.lastAnswerTime -= this.answerDebounce;
+					// }
 					this.lastAnswerTime /= 1000;
 					this.levelTimer += this.lastAnswerTime;
 					console.log('level timer = '+this.levelTimer);
