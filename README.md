@@ -4,7 +4,7 @@ Learn and self-test the math tables
 Demo site:
 - Learn by doing: https://storage.googleapis.com/maths-for-kids/maths.html
 - Roblox Challenge: https://storage.googleapis.com/maths-for-kids/maths.html?mode=roblox-challenge
-- https://jszoja.github.io/math-tables/maths.htm
+- https://jszoja.github.io/math-tables/maths.html
 
 
 # URL params
