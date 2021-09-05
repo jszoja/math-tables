@@ -1,16 +1,127 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+svg.bi.bi-file-plus {
+  color: #e6e6e6;
+  width: 100px;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.site {
+  max-width: 1920px;
+  margin: auto;
 }
 
-* {
-  box-sizing: border-box;
+
+
+.site>.container {
+  min-height: 500px;
+
+}
+
+.row.question {
+  height: 100px;
+}
+
+p.label {
+  margin-bottom: 5px;
+  font-size: 20px;
+}
+
+#levelLabel {
+  margin-top: 30px;
+}
+
+.level .fas {
+  font-size: 40px;
+  color: #e9ecef;
+}
+
+.fa-check {
+  color: green;
+  font-size: 40px;
+}
+
+.fa-check.empty {
+  color: #e9ecef;
+}
+
+#question {
+  font-size: 50px;
+  margin-top: 10px;
+}
+
+.photo img {
+  max-height: 200px;
+}
+
+.toast {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.toast-header svg {
+  margin-right: 10px;
+  font-size: 16px;
+  color: gold;
+}
+
+#feedback svg.bi-award-fill {
+  color: gold;
+}
+
+footer {
+  background-color: #f1c3d7;
+}
+
+#resetProgress {
+  color: white;
+}
+
+
+
+@media only screen and (min-width: 375px) {
+  .level .fas {
+    font-size: 50px;
+  }
+}
+
+@media only screen and (min-width: 425px) {
+  .level .fas {
+    font-size: 60px;
+  }
+}
+
+@media only screen and (min-width: 576px) {
+  .site {
+    background-image: url("data:image/svg+xml,<svg viewBox='0 0 16 16' class='bi bi-file-plus' fill='%23e6e6e6' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z'/><path fill-rule='evenodd' d='M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
+    background-size: 50px;
+  }
+
+  .site.minus {
+    background-image: url("data:image/svg+xml,<svg viewBox='0 0 16 16' class='bi bi-file-minus' fill='%23e6e6e6' xmlns='http://www.w3.org/2000/svg'>  <path fill-rule='evenodd' d='M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z'/>  <path fill-rule='evenodd' d='M5.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5z'/></svg>");
+  }
+
+  .site.multiply {
+    background-image: url("data:image/svg+xml,<svg viewBox='0 0 16 16' class='bi bi-file-excel' fill='%23e6e6e6' xmlns='http://www.w3.org/2000/svg'> <path fill-rule='evenodd' d='M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z'/> <path fill-rule='evenodd' d='M5.18 4.616a.5.5 0 0 1 .704.064L8 7.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 8l2.233 2.68a.5.5 0 0 1-.768.64L8 8.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 8 5.116 5.32a.5.5 0 0 1 .064-.704z'/> </svg>");
+  }
+
+  .level .fas {
+    font-size: 40px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .site {
+    background-size: 100px;
+  }
+
+  .level .fas {
+    font-size: 40px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .site {
+    background-size: 200px;
+  }
 }
